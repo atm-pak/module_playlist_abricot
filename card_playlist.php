@@ -42,6 +42,7 @@ if (empty($reshook))
 	switch ($action) {
 		case 'save':
 			$object->set_values($_REQUEST); // Set standard attributes
+			if(!$title || !$author) $error++;
 			
 			if ($error > 0)
 			{
@@ -118,7 +119,6 @@ $TBS=new TTemplateTBS();
 $TBS->TBS->protect=false;
 $TBS->TBS->noerr=true;
 
-var_dump($_SERVER['PHP_SELF']);
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot_createPlaylist');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list.php', 1).'">' . $langs->trans("BackToList") . '</a>';
