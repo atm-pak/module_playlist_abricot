@@ -12,12 +12,13 @@ $langs->load('playlistabricot@playlistabricot');
 
 $action = 	GETPOST('action');
 $id = 		GETPOST('id', 'int');
-$ref = 		GETPOST('ref');
+$title = 	GETPOST('title');
+$author = 	GETPOST('author');
+
 
 $mode = 'view';
 if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
-if ($action == 'create') 								$mode = 'create';
-if ($action == 'edit') 									$mode = 'edit';
+if ($action == 'create' || $action == 'edit')			$mode = 'edit';
 
 $PDOdb = new TPDOdb;
 $object = new TplaylistAbricot;
@@ -30,8 +31,7 @@ $hookmanager->initHooks(array('playlistabricotcard', 'globalcard'));
 /*
  * Actions
  */
-
-$parameters = array('id' => $id, 'ref' => $ref, 'mode' => $mode);
+$parameters = array('id' => $id, 'title' => $title, 'author' => $author);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -94,12 +94,7 @@ if (empty($reshook))
 $title=$langs->trans("playlistAbricot");
 llxHeader('',$title);
 
-if ($action == 'create')
-{
-	load_fiche_titre($langs->trans("NewplaylistAbricot"));;
-	dol_fiche_head();
-}
-if($action == 'edit')
+if($action == 'create' || $action == 'edit')
 {
 	load_fiche_titre($langs->trans("NewplaylistAbricot"));
 	dol_fiche_head();
@@ -123,7 +118,8 @@ $TBS=new TTemplateTBS();
 $TBS->TBS->protect=false;
 $TBS->TBS->noerr=true;
 
-if ($mode == 'edit') $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
+var_dump($_SERVER['PHP_SELF']);
+if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot_createPlaylist');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list.php', 1).'">' . $langs->trans("BackToList") . '</a>';
 print $TBS->render('tpl/card.tpl.php'
@@ -132,18 +128,11 @@ print $TBS->render('tpl/card.tpl.php'
 		'object'=> $object
 		,'view' => array(
 			'mode' => $mode
-			,'action' => 'create'
-			,'urlcard' => dol_buildpath('/playlistabricot/card.php', 1)
-			,'urllist' => dol_buildpath('/playlistabricot/list_playlits.php', 1)
-			//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
-			,'showLabel' => $formcore->texte('', 'label', $object->label, 80, 255)
-			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
+			,'action' => $action
 		)
 		,'langs' => $langs
 		,'user' => $user
 		,'conf' => $conf
-		,'TplaylistAbricot' => array(
-		)
 	)
 );
 
