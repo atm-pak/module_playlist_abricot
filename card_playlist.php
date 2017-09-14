@@ -11,10 +11,9 @@ if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 $langs->load('playlistabricot@playlistabricot');
 
 $action = 	GETPOST('action');
-$id = 		GETPOST('id', 'int');
+$id = 		GETPOST('id','int');
 $title = 	GETPOST('title');
 $author = 	GETPOST('author');
-
 
 $mode = 'view';
 if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
@@ -52,7 +51,7 @@ if (empty($reshook))
 			
 			$object->save($PDOdb, empty($object->ref));
 			
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?id='.$object->getId());
+			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
 			exit;
 			
 			break;
@@ -95,7 +94,7 @@ if (empty($reshook))
 $title=$langs->trans("playlistAbricot");
 llxHeader('',$title);
 
-if($action == 'create' || $action == 'edit')
+if($action == 'create' || $action == 'edit' || $mode == 'edit')
 {
 	load_fiche_titre($langs->trans("NewplaylistAbricot"));
 	dol_fiche_head();

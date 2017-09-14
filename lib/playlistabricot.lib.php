@@ -65,9 +65,15 @@ function playlistabricot_prepare_head(TplaylistAbricot $object)
     global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
-    $head[$h][0] = dol_buildpath('/playlistabricot/card.php', 1).'?id='.$object->getId();
+    $head[$h][0] = dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$object->getId();
     $head[$h][1] = $langs->trans("playlistAbricotCard");
     $head[$h][2] = 'card';
+    $h++;
+    
+    $head = array();
+    $head[$h][0] = dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$object->getId();
+    $head[$h][1] = $langs->trans("playlistAbricotCard");
+    $head[$h][2] = 'tracks';
     $h++;
 	
 	// Show more tabs from modules

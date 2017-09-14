@@ -139,7 +139,6 @@ else {
 			
 			break;
 		case 'view':
-			die('view');
 			$pl=new TplaylistAbricot();
 			$pl->load($PDOdb, __get('id',0,'integer'));
 			
@@ -513,11 +512,12 @@ function _liste(&$PDOdb) {
 	print $l->render($PDOdb, $sql,array(
 			
 			'link'=>array(
-					'title'=>'<a href="?action=view&id=@id@">@val@</a>'
+					'title'=>'<a href="?action=view&plistid=@id@">@val@</a>'
 			)
 			,'title'=>array(
 					'title'=>"Nom playlist",
 					'author'=>"Auteur playlist",
+					'id'=>"Id"
 			)
 			,'liste'=>array(
 					'orderby'=>'title'

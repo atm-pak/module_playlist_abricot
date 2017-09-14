@@ -16,7 +16,7 @@ class TplaylistAbricot extends TObjetStd
 	{
 		global $conf,$langs,$db;
 		
-		$this->set_table(MAIN_DB_PREFIX.'playlistApricot');
+		$this->set_table(MAIN_DB_PREFIX.'playlistAbricot');
 		
 		$this->add_champs('title', 	array('type' => 'string', 'length' => 80, 'index' => true));
 		$this->add_champs('author', array('type' => 'string'));
