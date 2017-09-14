@@ -10,13 +10,14 @@ if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 
 $langs->load('playlistabricot@playlistabricot');
 
-$action = GETPOST('action');
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref');
+$action = 	GETPOST('action');
+$id = 		GETPOST('id', 'int');
+$ref = 		GETPOST('ref');
 
 $mode = 'view';
-if (empty($user->rights->playlistabricot->all->write)) $mode = 'view'; // Force 'view' mode if can't edit object
-else if ($action == 'create' || $action == 'edit') $mode = 'edit';
+if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
+if ($action == 'create') 								$mode = 'create';
+if ($action == 'edit') 									$mode = 'edit';
 
 $PDOdb = new TPDOdb;
 $object = new TplaylistAbricot;
@@ -41,17 +42,6 @@ if (empty($reshook))
 	switch ($action) {
 		case 'save':
 			$object->set_values($_REQUEST); // Set standard attributes
-			
-//			$object->date_other = dol_mktime(GETPOST('starthour'), GETPOST('startmin'), 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
-
-			// Check parameters
-//			if (empty($object->date_other))
-//			{
-//				$error++;
-//				setEventMessages($langs->trans('warning_date_must_be_fill'), array(), 'warnings');
-//			}
-			
-			// ... 
 			
 			if ($error > 0)
 			{
@@ -104,7 +94,12 @@ if (empty($reshook))
 $title=$langs->trans("playlistAbricot");
 llxHeader('',$title);
 
-if ($action == 'create' && $mode == 'edit')
+if ($action == 'create')
+{
+	load_fiche_titre($langs->trans("NewplaylistAbricot"));;
+	dol_fiche_head();
+}
+if($action == 'edit')
 {
 	load_fiche_titre($langs->trans("NewplaylistAbricot"));
 	dol_fiche_head();
@@ -140,7 +135,7 @@ print $TBS->render('tpl/card.tpl.php'
 			,'action' => 'create'
 			,'urlcard' => dol_buildpath('/playlistabricot/card.php', 1)
 			,'urllist' => dol_buildpath('/playlistabricot/list_playlits.php', 1)
-			,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
+			//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 			,'showLabel' => $formcore->texte('', 'label', $object->label, 80, 255)
 			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 		)

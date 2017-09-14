@@ -9,6 +9,7 @@ playlistAbricotAbout = A propos du module playlistAbricot
 playlistAbricot=playlistAbricot
 playlistWord=playlists
 NewPlaylist=Nouvelle playlist
+CreatePlaylist = Creer la playlist
 
 # MENU
 TopMenuplaylistAbricot=playlistAbricot

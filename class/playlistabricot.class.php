@@ -12,31 +12,6 @@ if (!class_exists('TObjetStd'))
 
 class TplaylistAbricot extends TObjetStd
 {
-	/**
-	 * Draft status
-	 */
-	const STATUS_DRAFT = 0;
-	/**
-	 * Validated status
-	 */
-	const STATUS_VALIDATED = 1;
-	/**
-	 * Refused status
-	 */
-	const STATUS_REFUSED = 3;
-	/**
-	 * Accepted status
-	 */
-	const STATUS_ACCEPTED = 4;
-	
-	public static $TStatus = array(
-		self::STATUS_DRAFT => 'Draft'
-		,self::STATUS_VALIDATED => 'Validate'
-		,self::STATUS_REFUSED => 'Refuse'
-		,self::STATUS_ACCEPTED => 'Accept'
-	);
-
-
 	public function __construct()
 	{
 		global $conf,$langs,$db;
@@ -61,7 +36,6 @@ class TplaylistAbricot extends TObjetStd
 		$this->generic->table_element = $this->get_table();
 		$this->generic->element = 'playlistabricot';
 		
-		$this->status = self::STATUS_DRAFT;
 		$this->entity = $conf->entity;
 	}
 
@@ -214,11 +188,14 @@ class TplaylistAbricot extends TObjetStd
 		return $object->getNomUrl($withpicto);
 	}
 	
+	/*
 	public function getLibStatut($mode=0)
     {
         return self::LibStatut($this->status, $mode);
     }
+    */
 	
+    /*
 	public static function LibStatut($status, $mode)
 	{
 		global $langs;
@@ -236,6 +213,7 @@ class TplaylistAbricot extends TObjetStd
 		elseif ($mode == 3) return img_picto($langs->trans($keytrans), $statustrans).' '.$langs->trans($shortkeytrans);
 		elseif ($mode == 4) return $langs->trans($shortkeytrans).' '.img_picto($langs->trans($keytrans), $statustrans);
 	}
+	*/
 	
 }
 
