@@ -8,9 +8,13 @@ dol_include_once('/core/class/html.form.class.php');
 dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/core/lib/functions2.lib.php');
 
+require(DOL_DOCUMENT_ROOT . '/custom/playlistabricot/class/playlistabricot.class.php');
+
 
 $action=__get('action','list');
 $playlist_id=__get('plistid',0,'integer');;
+
+$pl=new TplaylistAbricot();
 
 $PDOdb=new TPDOdb;
 
@@ -166,7 +170,7 @@ else {
 			break;
 			
 		case 'new':
-			
+					
 			//$pl=new TplaylistAbricot();
 			$pl->set_values($_REQUEST);
 			
