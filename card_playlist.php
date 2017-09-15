@@ -11,13 +11,15 @@ if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 $langs->load('playlistabricot@playlistabricot');
 
 $action = 	GETPOST('action');
-$id = 		GETPOST('id','int');
+$id = 		GETPOST('id', 'int');
 $title = 	GETPOST('title');
 $author = 	GETPOST('author');
 
+$ref = 		GETPOST('ref');
+
 $mode = 'view';
 if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
-if ($action == 'create' || $action == 'edit')			$mode = 'edit';
+else if ($action == 'create' || $action == 'edit') 		$mode = 'edit';
 
 $PDOdb = new TPDOdb;
 $object = new TplaylistAbricot;
@@ -30,7 +32,8 @@ $hookmanager->initHooks(array('playlistabricotcard', 'globalcard'));
 /*
  * Actions
  */
-$parameters = array('id' => $id, 'title' => $title, 'author' => $author);
+
+$parameters = array('id' => $id, 'title' => $title, 'author' => $author, 'ref' => $ref, 'mode' => $mode);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -41,7 +44,17 @@ if (empty($reshook))
 	switch ($action) {
 		case 'save':
 			$object->set_values($_REQUEST); // Set standard attributes
-			if(!$title || !$author) $error++;
+			
+			//			$object->date_other = dol_mktime(GETPOST('starthour'), GETPOST('startmin'), 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
+			
+			// Check parameters
+			//			if (empty($object->date_other))
+				//			{
+			//				$error++;
+			//				setEventMessages($langs->trans('warning_date_must_be_fill'), array(), 'warnings');
+			//			}
+			
+			// ...
 			
 			if ($error > 0)
 			{
@@ -58,29 +71,29 @@ if (empty($reshook))
 		case 'confirm_clone':
 			$object->cloneObject($PDOdb);
 			
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?id='.$object->getId());
+			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?plistid='.$object->getId());
 			exit;
 			break;
 		case 'modif':
-			if (!empty($user->rights->playlistabricot->write)) $object->setDraft($PDOdb);
-				
+			if (!empty($user->rights->mymodule->write)) $object->setDraft($PDOdb);
+			
 			break;
 		case 'confirm_validate':
-			if (!empty($user->rights->playlistabricot->write)) $object->setValid($PDOdb);
+			if (!empty($user->rights->mymodule->write)) $object->setValid($PDOdb);
 			
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?id='.$object->getId());
+			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
 			exit;
 			break;
 		case 'confirm_delete':
-			if (!empty($user->rights->playlistabricot->write)) $object->delete($PDOdb);
+			if (!empty($user->rights->mymodule->write)) $object->delete($PDOdb);
 			
-			header('Location: '.dol_buildpath('/playlistabricot/list.php', 1));
+			header('Location: '.dol_buildpath('/playlistabricot/list_playlist.php', 1));
 			exit;
 			break;
-		// link from llx_element_element
+			// link from llx_element_element
 		case 'dellink':
 			$object->generic->deleteObjectLinked(null, '', null, '', GETPOST('dellinkid'));
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?id='.$object->getId());
+			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
 			exit;
 			break;
 	}
@@ -91,10 +104,10 @@ if (empty($reshook))
  * View
  */
 
-$title=$langs->trans("playlistAbricot");
+$title=$langs->trans("playlistabricot");
 llxHeader('',$title);
 
-if($action == 'create' || $action == 'edit' || $mode == 'edit')
+if ($action == 'create' && $mode == 'edit')
 {
 	load_fiche_titre($langs->trans("NewplaylistAbricot"));
 	dol_fiche_head();
@@ -118,25 +131,37 @@ $TBS=new TTemplateTBS();
 $TBS->TBS->protect=false;
 $TBS->TBS->noerr=true;
 
-if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot_createPlaylist');
+if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
 
-$linkback = '<a href="'.dol_buildpath('/playlistabricot/list.php', 1).'">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'">' . $langs->trans("BackToList") . '</a>';
 print $TBS->render('tpl/card.tpl.php'
-	,array() // Block
-	,array(
-		'object'=> $object
-		,'view' => array(
-			'mode' => $mode
-			,'action' => $action
+		,array() // Block
+		,array(
+				'object'=>$object
+				,'view' => array(
+						'mode' => $mode
+						,'action' => 'save'
+						,'urlcard' => dol_buildpath('/playlistabricot/card_playlist.php', 1)
+						,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
+						//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
+						//,'showLabel' => $formcore->texte('', 'label', $object->label, 80, 255)
+//			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
+						//,'showStatus' => $object->getLibStatut(1)
+				)
+				,'langs' => $langs
+				,'user' => $user
+				,'conf' => $conf
+				//,'TplaylistAbricot' => array(
+				//	'STATUS_DRAFT' => TplaylistAbricot::STATUS_DRAFT
+				//	,'STATUS_VALIDATED' => TplaylistAbricot::STATUS_VALIDATED
+				//	,'STATUS_REFUSED' => TplaylistAbricot::STATUS_REFUSED
+				//	,'STATUS_ACCEPTED' => TplaylistAbricot::STATUS_ACCEPTED
+				//)
 		)
-		,'langs' => $langs
-		,'user' => $user
-		,'conf' => $conf
-	)
-);
-
-if ($mode == 'edit') echo $formcore->end_form();
-
-if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
-
-llxFooter();
+		);
+		
+		if ($mode == 'edit') echo $formcore->end_form();
+		
+		if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
+		
+		llxFooter();

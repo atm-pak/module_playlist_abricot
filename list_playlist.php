@@ -343,6 +343,7 @@ function _fiche_sub_product(&$PDOdb, &$product ) {
 	print '</table>';
 	
 }
+
 function _fiche(&$PDOdb, &$ws, $mode='view', $editTask=false) {
 	global $db,$conf,$langs;
 	
