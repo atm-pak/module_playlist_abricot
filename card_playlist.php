@@ -16,9 +16,6 @@ $title = 		GETPOST('title');
 $author = 		GETPOST('author');
 $bitrate = 		GETPOST('bitrate');
 $type = 		GETPOST('type');
-$fk_playlist = 	GETPOST('fk_playlist');
-
-$ref = 			GETPOST('ref');
 
 $mode = 'view';
 if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
@@ -66,33 +63,10 @@ if (empty($reshook))
 			exit;
 			
 			break;
-		case 'confirm_clone':
-			$object->cloneObject($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?plistid='.$object->getId());
+		case 'showTracks':
+			$html = _liste($PDOdb, $id);
 			exit;
-			break;
-		case 'modif':
-			if (!empty($user->rights->mymodule->write)) $object->setDraft($PDOdb);
 			
-			break;
-		case 'confirm_validate':
-			if (!empty($user->rights->mymodule->write)) $object->setValid($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
-			exit;
-			break;
-		case 'confirm_delete':
-			if (!empty($user->rights->mymodule->write)) $object->delete($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/list_playlist.php', 1));
-			exit;
-			break;
-			// link from llx_element_element
-		case 'dellink':
-			$object->generic->deleteObjectLinked(null, '', null, '', GETPOST('dellinkid'));
-			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
-			exit;
 			break;
 	}
 }
@@ -114,7 +88,14 @@ else
 {
 	$head = playlistabricot_prepare_head($object);
 	$picto = 'generic';
-	dol_fiche_head($head, 'card', $langs->trans("playlistAbricot"), 0, $picto);
+	if($action == 'showTracks')
+	{
+		dol_fiche_head($head, 'tracks', $langs->trans("playlistAbricot"), 0, $picto);
+	}
+	else{
+		dol_fiche_head($head, 'card', $langs->trans("playlistAbricot"), 0, $picto);
+		$html = _defaultView();
+	}
 }
 
 $formcore = new TFormCore;
@@ -125,42 +106,49 @@ $form = new Form($db);
 $formconfirm = getFormConfirm($PDOdb, $form, $object, $action);
 if (!empty($formconfirm)) echo $formconfirm;
 
-$TBS=new TTemplateTBS();
-$TBS->TBS->protect=false;
-$TBS->TBS->noerr=true;
-
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'">' . $langs->trans("BackToList") . '</a>';
-print $TBS->render('tpl/card_playlist.tpl.php'
-		,array() // Block
-		,array(
-				'object'=>$object
-				,'view' => array(
-						'mode' => $mode
-						,'action' => 'save'
-						,'urlcard' => dol_buildpath('/playlistabricot/card_playlist.php', 1)
-						,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
-						//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
-						,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
-						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
-//			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
-						//,'showStatus' => $object->getLibStatut(1)
-				)
-				,'langs' => $langs
-				,'user' => $user
-				,'conf' => $conf
-				//,'TplaylistAbricot' => array(
-				//	'STATUS_DRAFT' => TplaylistAbricot::STATUS_DRAFT
-				//	,'STATUS_VALIDATED' => TplaylistAbricot::STATUS_VALIDATED
-				//	,'STATUS_REFUSED' => TplaylistAbricot::STATUS_REFUSED
-				//	,'STATUS_ACCEPTED' => TplaylistAbricot::STATUS_ACCEPTED
-				//)
-		)
-);
+
+print $html;
 		
 if ($mode == 'edit') echo $formcore->end_form();
 
-if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
+//if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
 
 llxFooter();
+
+
+function _liste(&$PDOdb, $id) {
+	global $conf, $langs;
+	/*
+	 * Liste des poste de travail de l'entité
+	 */
+	
+	$l=new TListviewTBS('listWS');
+	$sql= "SELECT title, author, type, bitrate FROM llx_trackAbricot WHERE fk_playlist = ". $id;
+
+	$html = $l->render($PDOdb, $sql,array(
+			
+			'link'=>array(
+					'name'=>'<a href="?action=view&id=@id@">@val@</a>'
+			)
+			,'title'=>array(
+					'title'=>"Titre",
+					'author'=>"Auteur",
+					'type'=>"Type",
+					'bitrate'=>'Bitrate',
+			)
+			,'liste'=>array(
+					'titre'=>'Liste des '.$langs->trans('TrackWord')
+					//,'image'=>img_picto('','title.png', '', 0)
+					//,'picto_precedent'=>img_picto('','back.png', '', 0)
+					//,'picto_suivant'=>img_picto('','next.png', '', 0)
+					//,'noheader'=> (int)isset($_REQUEST['fk_soc']) | (int)isset($_REQUEST['fk_product'])
+					//,'messageNothing'=>"Il n'y a aucun ".$langs->trans('WorkStation')." à afficher"
+					//,'picto_search'=>img_picto('','search.png', '', 0)
+			)
+			
+	));
+	return $html;	
+}

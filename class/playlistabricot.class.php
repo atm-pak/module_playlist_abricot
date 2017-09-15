@@ -278,8 +278,6 @@ class TTrackAbricot extends TObjetStd
 	
 	public function save(&$PDOdb, $addprov=false)
 	{
-		var_dump($this);
-		exit();
 		global $user;
 		
 		if (!$this->getId()) $this->fk_user_author = $user->id;

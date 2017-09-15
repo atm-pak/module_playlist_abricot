@@ -85,7 +85,7 @@ if ($action == 'create' && $mode == 'edit')
 }
 else
 {
-	$head = playlistabricot_prepare_head($object);
+	$head = track_prepare_head($object);
 	$picto = 'generic';
 	dol_fiche_head($head, 'card', $langs->trans("playlistAbricot"), 0, $picto);
 }
@@ -133,84 +133,6 @@ foreach($arrObjRow as $objPlaylist)
 	$selectArray[$objPlaylist->rowid] = $objPlaylist->title;
 }
 
-
-/*
-$values;
-
-$selctInput = $form->selectarray('', $values);
-
-$html = '
-		<div class="fiche">
-	
-		<div class="tabs" data-role="controlgroup" data-type="horizontal">
-		</div>
-		
-		<div class="tabBar tabBarWithBottom">
-		<form method="POST" action="/public/dolibarr-v6.0/htdocs/custom/playlistabricot/card_track.php" id="form_playlistabricot" name="form_playlistabricot"><!-- Un début de <div> existe de par la fonction dol_fiche_head() -->
-			<input type="hidden" name="action" value="save">
-			<table width="100%" class="border">
-				<tbody>
-					<tr class="label">
-						<td width="25%">TrackTitle</td>
-						<td>
-							<input class="text" type="text" id="title" name="title" value="" size="80" maxlength="255">
-		
-						</td>
-					</tr>
-		
-					<tr class="status">
-						<td width="25%">TrackAuthor</td>
-						<td>
-							<input class="text" type="text" id="author" name="author" value="" size="80" maxlength="255">
-		
-						</td>
-					</tr>
-					
-					<tr class="status">
-						<td width="25%">TrackType</td>
-						<td>
-							<input class="text" type="text" id="type" name="type" value="" size="80" maxlength="255">
-		
-						</td>
-					</tr>
-					
-					<tr class="status">
-						<td width="25%">TrackBitrate</td>
-						<td>
-							<input class="text" type="text" id="bitrate" name="bitrate" value="" size="80" maxlength="255">
-		
-						</td>
-					</tr>
-					
-					
-					<tr class="status">
-						<td width="25%">TrackPlaylist</td>
-						<td>
-							'. $selctInput .'
-						</td>
-					</tr>
-					
-				</tbody>
-			</table>
-		
-		</form></div> <!-- Fin div de la fonction dol_fiche_head() -->
-		
-		
-		<div class="center">
-			
-		
-			<input type="submit" value="CreateTrack" class="button">
-
-			<input type="button" onclick="javascript:history.go(-1)" value="Annuler" class="button">
-			
-		</div>
-
-	</div>
-';
-
-echo $html;
-*/
-
 print $TBS->render('tpl/card_track.tpl.php'
 		,array() // Block
 		,array(
@@ -218,8 +140,8 @@ print $TBS->render('tpl/card_track.tpl.php'
 				,'view' => array(
 						'mode' => $mode
 						,'action' => 'save'
-						,'urlcard' => dol_buildpath('/playlistabricot/card_playlist.php', 1)
-						,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
+						,'urlcard' => dol_buildpath('/playlistabricot/card_track.php', 1)
+						,'urllist' => dol_buildpath('/playlistabricot/list_track.php', 1)
 						//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 						,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
 						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
@@ -238,6 +160,6 @@ print $TBS->render('tpl/card_track.tpl.php'
 		
 if ($mode == 'edit') echo $formcore->end_form();
 
-if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
+//if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
 
 llxFooter();

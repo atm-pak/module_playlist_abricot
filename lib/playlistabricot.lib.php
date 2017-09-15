@@ -70,10 +70,34 @@ function playlistabricot_prepare_head(TplaylistAbricot $object)
     $head[$h][2] = 'card';
     $h++;
     
+    $head[$h][0] = dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$object->getId().'&action=showTracks';
+    $head[$h][1] = $langs->trans("TracksAssociated");
+    $head[$h][2] = 'tracks';
+    $h++;
+	
+	// Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@playlistabricot:/playlistabricot/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@playlistabricot:/playlistabricot/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'playlistabricot');
+	
+	return $head;
+}
+
+/**
+ * Return array of tabs to used on pages for third parties cards.
+ *
+ * @param 	TplaylistAbricot	$object		Object company shown
+ * @return 	array				Array of tabs
+ */
+function track_prepare_head(TTrackAbricot $object)
+{
+    global $db, $langs, $conf, $user;
+    $h = 0;
     $head = array();
     $head[$h][0] = dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$object->getId();
     $head[$h][1] = $langs->trans("playlistAbricotCard");
-    $head[$h][2] = 'tracks';
+    $head[$h][2] = 'card';
     $h++;
 	
 	// Show more tabs from modules

@@ -56,7 +56,7 @@ echo $r->render($PDOdb, $sql, array(
 		)
 		,'subQuery' => array()
 		,'link' => array(
-				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>'
+				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>'
 		)
 		,'type' => array()
 		,'search' => array(
