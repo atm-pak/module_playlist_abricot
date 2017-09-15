@@ -1,312 +1,255 @@
 <?php
 
 require('config.php');
+dol_include_once('/playlistabricot/class/playlistabricot.class.php');
 
+if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
+
+$langs->load('abricot@abricot');
 $langs->load('playlistabricot@playlistabricot');
 
-dol_include_once('/core/class/html.form.class.php');
-dol_include_once('/core/class/html.formother.class.php');
-dol_include_once('/core/lib/functions2.lib.php');
-
-require(DOL_DOCUMENT_ROOT . '/custom/playlistabricot/class/playlistabricot.class.php');
-
+$PDOdb = new TPDOdb;
+$object = new TplaylistAbricot;
 
 $action=__get('action','list');
-$playlist_id=__get('plistid',0,'integer');;
+$playlist_id=__get('plistid',0,'integer');
 
-$pl=new TplaylistAbricot();
+$hookmanager->initHooks(array('mymodulelist'));
 
-$PDOdb=new TPDOdb;
+/*
+ * Actions
+ */
 
-llxHeader('',$langs->trans('TitlePlaylistPage'),'','');
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if($playlist_id>0) {
-	
-	switch($action) {
-		
-		case 'add':
-			$fk_workstation = __get('fk_workstation',0,'int');
+if (empty($reshook))
+{
+	if($playlist_id) {
+		switch($action) {
 			
-			if (!$fk_workstation)
-			{
-				setEventMessage('Aucun poste de travail séléctionné', 'errors');
-				_liste_link($PDOdb, $fk_product);
-				break;
-			}
-			
-			$wsp = new TWorkstationProduct;
-			$wsp->fk_product = $fk_product;
-			$wsp->fk_workstation = $fk_workstation;
-			
-			$ws = new TWorkstation;
-			$ws->load($PDOdb,$fk_workstation);
-			
-			$wsp->nb_hour_prepare = $ws->nb_hour_prepare;
-			$wsp->nb_hour_manufacture = $ws->nb_hour_manufacture;
-			$wsp->nb_hour = $ws->nb_hour_prepare + $ws->nb_hour_manufacture;
-			
-			$wsp->save($PDOdb);
-			
-			setEventMessage('Poste de travail ajouté');
-			
-			_liste_link($PDOdb, $fk_product);
-			
-			break;
-			
-		case 'list':
-			_liste_link($PDOdb, $fk_product);
-			
-			break;
-			
-		case 'save':
-			
-			foreach($_REQUEST['TWorkstationProduct'] as $id=>$row) {
+			case 'add':
+				$fk_workstation = __get('fk_workstation',0,'int');
+				
+				if (!$fk_workstation)
+				{
+					setEventMessage('Aucun poste de travail séléctionné', 'errors');
+					_liste_link($PDOdb, $fk_product);
+					break;
+				}
 				
 				$wsp = new TWorkstationProduct;
-				//$PDOdb->debug=true;
-				$wsp->load($PDOdb, $id);
+				$wsp->fk_product = $fk_product;
+				$wsp->fk_workstation = $fk_workstation;
 				
-				$wsp->nb_hour_prepare = Tools::string2num($row['nb_hour_prepare']);
-				$wsp->nb_hour_manufacture = Tools::string2num($row['nb_hour_manufacture']);
-				$wsp->nb_hour = $wsp->nb_hour_prepare + $wsp->nb_hour_manufacture;
-				$wsp->rang = (double) $row['rang'];
+				$ws = new TWorkstation;
+				$ws->load($PDOdb,$fk_workstation);
+				
+				$wsp->nb_hour_prepare = $ws->nb_hour_prepare;
+				$wsp->nb_hour_manufacture = $ws->nb_hour_manufacture;
+				$wsp->nb_hour = $ws->nb_hour_prepare + $ws->nb_hour_manufacture;
 				
 				$wsp->save($PDOdb);
-			}
-			
-			setEventMessage('Modifications enregistrées');
-			
-			_liste_link($PDOdb, $fk_product);
-			break;
-			
-		case 'delete':
-			$wsp = new TWorkstationProduct;
-			$wsp->load($PDOdb, GETPOST('id_wsp'));
-			$wsp->to_delete = true;
-			$wsp->save($PDOdb);
-			
-			_liste_link($PDOdb, $fk_product);
-			
-			break;
-			
+				
+				setEventMessage('Poste de travail ajouté');
+				
+				_liste_link($PDOdb, $fk_product);
+				
+				break;
+				
+			case 'list':
+				_liste_link($PDOdb, $fk_product);
+				
+				break;
+				
+			case 'save':
+				
+				foreach($_REQUEST['TWorkstationProduct'] as $id=>$row) {
+					
+					$wsp = new TWorkstationProduct;
+					//$PDOdb->debug=true;
+					$wsp->load($PDOdb, $id);
+					
+					$wsp->nb_hour_prepare = Tools::string2num($row['nb_hour_prepare']);
+					$wsp->nb_hour_manufacture = Tools::string2num($row['nb_hour_manufacture']);
+					$wsp->nb_hour = $wsp->nb_hour_prepare + $wsp->nb_hour_manufacture;
+					$wsp->rang = (double) $row['rang'];
+					
+					$wsp->save($PDOdb);
+				}
+				
+				setEventMessage('Modifications enregistrées');
+				
+				_liste_link($PDOdb, $fk_product);
+				break;
+				
+			case 'delete':
+				$wsp = new TWorkstationProduct;
+				$wsp->load($PDOdb, GETPOST('id_wsp'));
+				$wsp->to_delete = true;
+				$wsp->save($PDOdb);
+				
+				_liste_link($PDOdb, $fk_product);
+				
+				break;
+		}
 	}
-	
-}
-else {
-	
-	switch($action) {
-		
-		case 'save':
-			$ws=new TWorkstation;
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			$ws->set_values($_REQUEST);
-			
-			if(!empty($_REQUEST['TWorkstationSchedule'])) {
+	else {
+		switch($action){
+			case 'save':
+				$ws=new TWorkstation;
+				$ws->load($PDOdb, __get('id',0,'integer'));
+				$ws->set_values($_REQUEST);
 				
-				foreach($_REQUEST['TWorkstationSchedule'] as $k=>&$wsc) {
+				if(!empty($_REQUEST['TWorkstationSchedule'])) {
 					
-					if($k == -1) $k=$ws->addChild($PDOdb, 'TWorkstationSchedule');
-					
-					$ws->TWorkstationSchedule[$k]->set_values($wsc);
-				}
-				
-			}
-			
-			
-			if(!empty($_REQUEST['TWSTask']['libelle'])) {
-				if($_REQUEST['id_task'] == 0) {
-					
-					$k = $ws->addChild($PDOdb, 'TAssetWorkstationTask');
-					
-					$ws->TAssetWorkstationTask[$k]->set_values($_REQUEST['TWSTask']);
-					
-				}
-				else {
-					
-					foreach($ws->TAssetWorkstationTask as $k=>&$wst) {
+					foreach($_REQUEST['TWorkstationSchedule'] as $k=>&$wsc) {
 						
-						if($wst->getId() == $_REQUEST['id_task']) {
-							$ws->TAssetWorkstationTask[$k]->set_values($_REQUEST['TWSTask']);
+						if($k == -1) $k=$ws->addChild($PDOdb, 'TWorkstationSchedule');
+						
+						$ws->TWorkstationSchedule[$k]->set_values($wsc);
+					}
+					
+				}
+				
+				
+				if(!empty($_REQUEST['TWSTask']['libelle'])) {
+					if($_REQUEST['id_task'] == 0) {
+						
+						$k = $ws->addChild($PDOdb, 'TAssetWorkstationTask');
+						
+						$ws->TAssetWorkstationTask[$k]->set_values($_REQUEST['TWSTask']);
+						
+					}
+					else {
+						
+						foreach($ws->TAssetWorkstationTask as $k=>&$wst) {
 							
-							break;
+							if($wst->getId() == $_REQUEST['id_task']) {
+								$ws->TAssetWorkstationTask[$k]->set_values($_REQUEST['TWSTask']);
+								
+								break;
+							}
+							
 						}
 						
 					}
 					
 				}
 				
-			}
-			
-			$ws->save($PDOdb);
-			
-			_fiche($PDOdb, $ws);
-			
-			break;
-		case 'view':
-			$pl=new TplaylistAbricot();
-			$pl->load($PDOdb, __get('id',0,'integer'));
-			
-			_fiche($PDOdb, $ws);
-			
-			break;
-			
-		case 'edit':
-			die('edit');
-			$ws=new TWorkstation;
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			_fiche($PDOdb, $ws,'edit');
-			
-			break;
-			
-		case 'delete':
-			die('delete');
-			$ws=new TWorkstation;
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			
-			$ws->delete($PDOdb);
-			
-			_liste($PDOdb);
-			
-			break;
-			
-		case 'new':
-					
-			//$pl=new TplaylistAbricot();
-			$pl->set_values($_REQUEST);
-			
-			_fiche($PDOdb, $pl,'edit');
-			
-			break;
-			
-		case 'list':
-			_liste($PDOdb);
-			
-			break;
-			
-		case 'editTask':
-			$ws=new TplaylistAbricot;
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			_fiche($PDOdb, $ws, 'view', 1);
-			
-			break;
-			
-		case 'editTaskConfirm':
-			//$ws=new TAssetWorkstation;--
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			
-			$k=$ws->addChild($PDOdb,'TAssetWorkstationTask', __get('id_task', 0, 'int'));
-			$ws->TAssetWorkstationTask[$k]->fk_workstation = $ws->getId();
-			$ws->TAssetWorkstationTask[$k]->libelle = __get('libelle');
-			$ws->TAssetWorkstationTask[$k]->description = __get('description');
-			
-			if ($ws->TAssetWorkstationTask[$k]->save($PDOdb)) setEventMessage($langs->trans('WorkstationMsgSaveTask'));
-			else setEventMessage($langs->trans('WorkstationErrSaveTask'));
-			
-			_fiche($PDOdb, $ws, 'view');
-			
-			break;
-			
-		case 'deleteTask':
-			$ws=new TWorkstation;
-			$ws->load($PDOdb, __get('id',0,'integer'));
-			
-			if ($ws->removeChild('TAssetWorkstationTask', __get('id_task',0,'integer')))
-			{
 				$ws->save($PDOdb);
+				
+				_fiche($PDOdb, $ws);
+				
+				break;
+				
+			case 'edit':
+				die('edit');
+				$ws=new TWorkstation;
 				$ws->load($PDOdb, __get('id',0,'integer'));
-				setEventMessage($langs->trans('WorkstationMsgDeleteTask'));
-			}
-			else setEventMessage($langs->trans('WorkstationErrDeleteTask'));
-			
-			_fiche($PDOdb, $ws, 'view');
-			
-			break;
-			
+				_fiche($PDOdb, $ws,'edit');
+				
+				break;
+				
+			case 'delete':
+				die('delete');
+				$ws=new TWorkstation;
+				$ws->load($PDOdb, __get('id',0,'integer'));
+				
+				$ws->delete($PDOdb);
+				
+				_liste($PDOdb);
+				
+				break;
+				
+			case 'new':
+				
+				//$pl=new TplaylistAbricot();
+				$pl->set_values($_REQUEST);
+				
+				_fiche($PDOdb, $pl,'edit');
+				
+				break;
+				
+			case 'list':
+				$result = _liste($PDOdb);
+				break;
+				
+			case 'editTask':
+				$ws=new TplaylistAbricot;
+				$ws->load($PDOdb, __get('id',0,'integer'));
+				_fiche($PDOdb, $ws, 'view', 1);
+				
+				break;
+				
+			case 'editTaskConfirm':
+				//$ws=new TAssetWorkstation;--
+				$ws->load($PDOdb, __get('id',0,'integer'));
+				
+				$k=$ws->addChild($PDOdb,'TAssetWorkstationTask', __get('id_task', 0, 'int'));
+				$ws->TAssetWorkstationTask[$k]->fk_workstation = $ws->getId();
+				$ws->TAssetWorkstationTask[$k]->libelle = __get('libelle');
+				$ws->TAssetWorkstationTask[$k]->description = __get('description');
+				
+				if ($ws->TAssetWorkstationTask[$k]->save($PDOdb)) setEventMessage($langs->trans('WorkstationMsgSaveTask'));
+				else setEventMessage($langs->trans('WorkstationErrSaveTask'));
+				
+				_fiche($PDOdb, $ws, 'view');
+				
+				break;
+				
+			case 'deleteTask':
+				$ws=new TWorkstation;
+				$ws->load($PDOdb, __get('id',0,'integer'));
+				
+				if ($ws->removeChild('TAssetWorkstationTask', __get('id_task',0,'integer')))
+				{
+					$ws->save($PDOdb);
+					$ws->load($PDOdb, __get('id',0,'integer'));
+					setEventMessage($langs->trans('WorkstationMsgDeleteTask'));
+				}
+				else setEventMessage($langs->trans('WorkstationErrDeleteTask'));
+				
+				_fiche($PDOdb, $ws, 'view');
+				
+				break;
+				
+			case 'view':
+				_liste($PDOdb);
+				/*
+				 $pl=new TplaylistAbricot();
+				 $pl->load($PDOdb, __get('id',0,'integer'));
+				 
+				 _fiche($PDOdb, $pl);
+				 */
+				break;
+		}
 	}
-	
 }
 
+/*
+ * View
+ */
+llxHeader('',$langs->trans('TitlePlaylistPage'),'','');
 
-llxFooter();
+$formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_playlistabricot', 'GET');
 
-function _liste_link(&$PDOdb, $fk_product) {
-	global $db,$langs,$conf, $user;
-	
-	if($fk_product>0){
-		if(is_file(DOL_DOCUMENT_ROOT."/lib/product.lib.php")) require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-		else require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-		
-		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-		
-		$product = new Product($db);
-		$result=$product->fetch($fk_product);
-		
-		$head=product_prepare_head($product, $user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
-		dol_fiche_head($head, 'tabWorkstation', $titre, 0, $picto);
-		
-		headerProduct($product);
-	}
-	
-	
-	$form=new TFormCore('auto','formLWS');
-	echo $form->hidden('action', 'save');
-	echo $form->hidden('fk_product', $fk_product);
-	
-	
-	$l=new TListviewTBS('listWS');
-	
-	
-	$sql= "	SELECT wsp.rowid as id, wsp.fk_workstation as id_ws, ws.name, wsp.rang, wsp.nb_hour_prepare, wsp.nb_hour_manufacture, wsp.nb_hour, '' as 'action'
-			FROM ".MAIN_DB_PREFIX."workstation ws LEFT OUTER JOIN ".MAIN_DB_PREFIX."workstation_product wsp ON (wsp.fk_workstation=ws.rowid)
-			WHERE entity IN(".getEntity('workstation', 1).")
-			AND wsp.fk_product=".$fk_product;
-	
-	$liste =  $l->render($PDOdb, $sql,array(
-			'link'=>array(
-					'libelle'=>'<a href="?action=view&id=@id@">@val@</a>'
-					,'rang'=>'<input type="text" name="TWorkstationProduct[@id@][rang]" value="@val@" size="5" />'
-					,'nb_hour_prepare'=>'<input type="text" name="TWorkstationProduct[@id@][nb_hour_prepare]" value="@val@" size="5" />'
-					,'nb_hour_manufacture'=>'<input type="text" name="TWorkstationProduct[@id@][nb_hour_manufacture]" value="@val@" size="5" />'
-					//,'nb_hour'=>'<input type="text" name="TWorkstationProduct[@id@][nb_hour]" value="@val@" size="5" />'
-					,'nb_hour'=>'@val@'
-					,'action'=> '<a href="workstation.php?action=delete&fk_product='.$fk_product.'&id_wsp=@id@">'.img_picto('Supprimer', 'delete.png').'</a>'
-			)
-			,'title'=>array(
-					'nb_hour_prepare'=>"Nombre d'heures de préparation"
-					,'nb_hour_manufacture'=>"Nombre d'heures de fabrication"
-					,'nb_hour'=>"Nombre d'heures totale"
-					,'rang'=>"Rang"
-			)
-			,'hide'=>array('id_ws')
-	));
-	
-	$TBS=new TTemplateTBS;
-	
-	
-	print $TBS->render('./tpl/workstation_link.tpl.php',
-			array()
-			,array(
-					'view'=>array(
-							'mode'=>$mode
-							,'liste'=>$liste
-							,'select_workstation'=>$form->combo('', 'fk_workstation', TWorkstation::getWorstations($PDOdb), -1)
-							,'fk_product'=>$fk_product
-					)
-			)
-			
-			);
-	
-	if($conf->global->WORKSTATION_LINK_SUBPRODUCT && $fk_product>0) {
-		_fiche_sub_product($PDOdb, $product);
-		
-	}
-	
-	$form->end();
-	
-	
-}
+$form=new TFormCore('auto','formLWS');
+
+$nbLine = !empty($user->conf->MAIN_SIZE_LISTE_LIMIT) ? $user->conf->MAIN_SIZE_LISTE_LIMIT : $conf->global->MAIN_SIZE_LISTE_LIMIT;
+
+$r = new TListviewTBS('playlistabricot');
+
+print $result['html'];
+
+$parameters=array('sql'=>$result['sql']);
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters, $object);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+$formcore->end_form();
+
+llxFooter('');
 
 function _fiche_sub_product(&$PDOdb, &$product ) {
 	global $langs, $db;
@@ -383,7 +326,7 @@ function _fiche(&$PDOdb, &$ws, $mode='view', $editTask=false) {
 	$TListTask = _liste_task($ws);
 	$TFormTask = _fiche_task($PDOdb, $editTask);
 	
-	$head=workstation_prepare_head( $ws );
+	$head=playlistabricot_prepare_head( $ws );
 	$titre=$langs->trans('WorkStation');
 	dol_fiche_head($head, 'card', $titre);
 	
@@ -505,18 +448,16 @@ function _fiche_task(&$PDOdb, $editTask)
 
 function _liste(&$PDOdb) {
 	global $conf, $langs;
-	/*
-	 * Liste des poste de travail de l'entité
-	 */
-	$l=new TListviewTBS('listWS');
+	$l=new TListviewTBS('playlistabricot');
 	
 	$sql= "SELECT p.title, p.author
 			
-	FROM ".MAIN_DB_PREFIX."playlistAbricot p";
+	FROM ".MAIN_DB_PREFIX."playlistabricot p";
 	
-	print $l->render($PDOdb, $sql,array(
-			
+	//genere html avant ds la variable (ne fonctionne pas ds le switch)
+	$html = $l->render($PDOdb, $sql, array(
 			'link'=>array(
+					//#TODO reprnedre ici : pourquoi @val@ n'est pas remplacé par l'id ?
 					'title'=>'<a href="?action=view&plistid=@id@">@val@</a>'
 			)
 			,'title'=>array(
@@ -530,13 +471,19 @@ function _liste(&$PDOdb) {
 					,'image'=>img_picto('','title.png', '', 0)
 					,'picto_precedent'=>img_picto('','back.png', '', 0)
 					,'picto_suivant'=>img_picto('','next.png', '', 0)
-					,'noheader'=> (int)isset($_REQUEST['fk_soc']) | (int)isset($_REQUEST['fk_product'])
+					//,'noheader'=> (int)isset($_REQUEST['fk_soc']) | (int)isset($_REQUEST['fk_product'])
 					,'messageNothing'=>"Il n'y a aucune ".$langs->trans('playlistWord')." à afficher"
 					,'picto_search'=>img_picto('','search.png', '', 0)
 			)
 	));
+	
+	$resultArray = array(
+			"html" => $html,
+			"sql" => $sql
+	);
+	
+	return $resultArray;
 }
-
 
 function headerProduct(&$object) {
 	global $langs, $conf, $db;
