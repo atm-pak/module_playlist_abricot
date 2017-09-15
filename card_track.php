@@ -61,12 +61,6 @@ if (empty($reshook))
 
 			header('Location: '.dol_buildpath('/playlistabricot/list_track.php', 1));
 			exit;
-			
-			break;
-		case 'dellink':
-			$object->generic->deleteObjectLinked(null, '', null, '', GETPOST('dellinkid'));
-			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
-			exit;
 			break;
 	}
 }
@@ -147,7 +141,8 @@ print $TBS->render('tpl/card_track.tpl.php'
 						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
 						,'showType' => $formcore->texte('', 'type', $object->type, 80, 255)
 						,'showBitrate' => $formcore->texte('', 'bitrate', $object->bitrate, 80, 255)
-						,'showPlaytlists' => $form->selectarray('fk_playlist',$selectArray)
+						,'showPlaytlists' => $form->selectarray('fk_playlist',$selectArray, $object->fk_playlist)
+						,'showPlaylistName' => $object->getPlaylistAssociate()
 //			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 						//,'showStatus' => $object->getLibStatut(1)
 				)

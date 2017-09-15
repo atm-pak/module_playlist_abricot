@@ -298,5 +298,14 @@ class TTrackAbricot extends TObjetStd
 		
 		return $res;
 	}
+	
+	public function getPlaylistAssociate(&$PDOdb){
+		$sql = 'SELECT DISTINCT pl.title 
+				FROM '.MAIN_DB_PREFIX.'trackAbricot as t 
+				LEFT JOIN llx_playlistAbricot as pl
+				ON pl.rowid = t.fk_playlist
+				WHERE t.fk_playlist = 0 '
+		$this->fk_playlist;
+	}
 }
 

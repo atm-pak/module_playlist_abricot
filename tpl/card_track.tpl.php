@@ -30,6 +30,13 @@
 				</td>
 			</tr>
 			
+			<tr class="status">
+				<td width="25%">[langs.transnoentities(PlaylistAssociated)]</td>
+				<td>
+					[view.showPlaylistName;strconv=no]
+				</td>
+			</tr>
+			
 			[onshow;block=begin;when [view.mode]='edit']
 			<tr class="status">
 				<td width="25%">[langs.transnoentities(AssociatedPlaylist)]</td>
