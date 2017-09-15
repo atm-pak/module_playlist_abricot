@@ -6,12 +6,23 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 playlistAbricotSetup = Configuration du module playlistAbricot
 playlistAbricotAbout = A propos du module playlistAbricot
 
-playlistAbricot=playlistAbricot
+playlistAbricot=Playlist
 playlistWord=playlists
 NewPlaylist=Nouvelle playlist
 CreatePlaylist=Creer la playlist
 PlaylistTitle=Titre de la playlist
 PlaylistAuthor=Auteur de la playlist
+TplayList=Playlistes
+TrackList=Liste des tracks
+title=Titre
+author=Auteur
+
+TrackTitle=Titre
+TrackAuthor=Auteur
+TrackType=Type
+TrackBitrate=Bitrate
+AssociatedPlaylist=Playlist associée
+CreateTrack=Creer la track
 
 # MENU
 TopMenuplaylistAbricot=playlistAbricot

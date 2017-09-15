@@ -59,7 +59,7 @@ if (empty($reshook))
 		case 'delete':
 			$object->delete($PDOdb);
 
-			header('Location: '.dol_buildpath('/playlistabricot/list_playlist.php', 1));
+			header('Location: '.dol_buildpath('/playlistabricot/list_track.php', 1));
 			exit;
 			
 			break;
@@ -75,12 +75,12 @@ if (empty($reshook))
  * View
  */
 
-$title=$langs->trans("playlistabricot");
+$title=$langs->trans("playlistAbricot");
 llxHeader('',$title);
 
 if ($action == 'create' && $mode == 'edit')
 {
-	load_fiche_titre($langs->trans("NewplaylistAbricot"));
+	load_fiche_titre($langs->trans("NewPlaylist"));
 	dol_fiche_head();
 }
 else

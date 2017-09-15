@@ -6,12 +6,12 @@ dol_include_once('/playlistabricot/class/playlistabricot.class.php');
 if(empty($user->rights->mymodule->read)) accessforbidden();
 
 $langs->load('abricot@abricot');
-$langs->load('mymodule@mymodule');
+$langs->load('playlistabricot@playlistabricot');
 
 $PDOdb = new TPDOdb;
 $object = new TplaylistAbricot();
 
-$hookmanager->initHooks(array('mymodulelist'));
+$hookmanager->initHooks(array('playlistabricot'));
 
 /*
  * Actions
@@ -31,7 +31,7 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('',$langs->trans('MyModuleList'),'','');
+llxHeader('',$langs->trans('playlistabricot'),'','');
 
 //$type = GETPOST('type');
 //if (empty($user->rights->mymodule->all->read)) $type = 'mine';

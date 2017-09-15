@@ -64,9 +64,7 @@ if (empty($reshook))
 			
 			break;
 		case 'showTracks':
-			$html = _liste($PDOdb, $id);
-			exit;
-			
+			$html = _liste($PDOdb, $id);			
 			break;
 	}
 }
@@ -94,7 +92,6 @@ else
 	}
 	else{
 		dol_fiche_head($head, 'card', $langs->trans("playlistAbricot"), 0, $picto);
-		$html = _defaultView();
 	}
 }
 
@@ -106,18 +103,57 @@ $form = new Form($db);
 $formconfirm = getFormConfirm($PDOdb, $form, $object, $action);
 if (!empty($formconfirm)) echo $formconfirm;
 
+$TBS=new TTemplateTBS();
+$TBS->TBS->protect=false;
+$TBS->TBS->noerr=true;
+
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'">' . $langs->trans("BackToList") . '</a>';
 
-print $html;
+$htmlDefault = $TBS->render('tpl/card_playlist.tpl.php'
+		,array() // Block
+		,array(
+				'object'=>$object
+				,'view' => array(
+					'mode' => $mode
+					,'action' => 'save'
+					,'urlcard' => dol_buildpath('/playlistabricot/card_playlist.php', 1)
+					,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
+					//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
+					,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
+					,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
+					//,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
+					//,'showStatus' => $object->getLibStatut(1)
+				)
+				,'langs' => $langs
+				,'user' => $user
+				,'conf' => $conf
+				//,'TplaylistAbricot' => array(
+				//	'STATUS_DRAFT' => TplaylistAbricot::STATUS_DRAFT
+				//	,'STATUS_VALIDATED' => TplaylistAbricot::STATUS_VALIDATED
+				//	,'STATUS_REFUSED' => TplaylistAbricot::STATUS_REFUSED
+				//	,'STATUS_ACCEPTED' => TplaylistAbricot::STATUS_ACCEPTED
+				//)
+		)
+	);
+
+$html = _liste($PDOdb, $id);
+
+if($action == 'showTracks')
+{
+	print $html;
+}
+else
+{
+	print $htmlDefault;
+}
 		
 if ($mode == 'edit') echo $formcore->end_form();
 
 //if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);
 
 llxFooter();
-
 
 function _liste(&$PDOdb, $id) {
 	global $conf, $langs;
@@ -126,18 +162,21 @@ function _liste(&$PDOdb, $id) {
 	 */
 	
 	$l=new TListviewTBS('listWS');
-	$sql= "SELECT title, author, type, bitrate FROM llx_trackAbricot WHERE fk_playlist = ". $id;
+	$sql= "SELECT rowid, title, author, type, bitrate FROM llx_trackAbricot WHERE fk_playlist = ". $id;
 
 	$html = $l->render($PDOdb, $sql,array(
 			
 			'link'=>array(
-					'name'=>'<a href="?action=view&id=@id@">@val@</a>'
+					'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>'
 			)
 			,'title'=>array(
 					'title'=>"Titre",
 					'author'=>"Auteur",
 					'type'=>"Type",
 					'bitrate'=>'Bitrate',
+			)
+			,'hide' => array(
+					'rowid'
 			)
 			,'liste'=>array(
 					'titre'=>'Liste des '.$langs->trans('TrackWord')

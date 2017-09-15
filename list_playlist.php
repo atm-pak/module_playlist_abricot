@@ -31,16 +31,9 @@ if (empty($reshook))
 
 llxHeader('',$langs->trans('MyModuleList'),'','');
 
-//$type = GETPOST('type');
-//if (empty($user->rights->mymodule->all->read)) $type = 'mine';
-
-// TODO ajouter les champs de son objet que l'on souhaite afficher
 $sql = 'SELECT t.rowid, t.title, t.author';
-
 $sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot t ';
-//$sql.= ' AND t.entity IN ('.getEntity('MyModule', 1).')';
-//if ($type == 'mine') $sql.= ' AND t.fk_user = '.$user->id;
-// echo $sql;
+
 
 $formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_mymodule', 'GET');
 
