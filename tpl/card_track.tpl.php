@@ -32,7 +32,7 @@
 			
 			[onshow;block=begin;when [view.mode]='edit']
 			<tr class="status">
-				<td width="25%">[langs.transnoentities(TrackPlaylist)]</td>
+				<td width="25%">[langs.transnoentities(Playlists)]</td>
 				<td>
 					[view.showPlaytlists;strconv=no]
 				</td>

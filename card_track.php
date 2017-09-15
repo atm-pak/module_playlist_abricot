@@ -22,7 +22,7 @@ if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force
 else if ($action == 'create' || $action == 'edit') 		$mode = 'edit';
 
 $PDOdb = new TPDOdb;
-$object = new TplaylistAbricot;
+$object = new TTrackAbricot;
 
 if (!empty($id)) $object->load($PDOdb, $id);
 elseif (!empty($ref)) $object->loadBy($PDOdb, $ref, 'ref');
@@ -71,7 +71,6 @@ if (empty($reshook))
 	}
 }
 
-
 /**
  * View
  */
@@ -103,11 +102,115 @@ $TBS=new TTemplateTBS();
 $TBS->TBS->protect=false;
 $TBS->TBS->noerr=true;
 
-if ($mode == 'edit') 
+//if ($mode == 'edit') load
 
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'">' . $langs->trans("BackToList") . '</a>';
+
+
+/*
+ * creation du champ select des playlists
+ */
+//recup les obj playlist
+$sql = 'SELECT rowid, title';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot';
+
+$resql = $db->query($sql);
+$arrObjRow = array();
+
+if($resql)
+{
+	while($objPlaylist = $db->fetch_object($resql))
+	{
+		array_push($arrObjRow, $objPlaylist);
+	}
+}
+//creation du tableau associatif a passer en param a la fonction de generation de champ select
+$selectArray = array();
+foreach($arrObjRow as $objPlaylist)
+{
+	$selectArray[$objPlaylist->rowid] = $objPlaylist->title;
+}
+
+
+/*
+$values;
+
+$selctInput = $form->selectarray('', $values);
+
+$html = '
+		<div class="fiche">
+	
+		<div class="tabs" data-role="controlgroup" data-type="horizontal">
+		</div>
+		
+		<div class="tabBar tabBarWithBottom">
+		<form method="POST" action="/public/dolibarr-v6.0/htdocs/custom/playlistabricot/card_track.php" id="form_playlistabricot" name="form_playlistabricot"><!-- Un début de <div> existe de par la fonction dol_fiche_head() -->
+			<input type="hidden" name="action" value="save">
+			<table width="100%" class="border">
+				<tbody>
+					<tr class="label">
+						<td width="25%">TrackTitle</td>
+						<td>
+							<input class="text" type="text" id="title" name="title" value="" size="80" maxlength="255">
+		
+						</td>
+					</tr>
+		
+					<tr class="status">
+						<td width="25%">TrackAuthor</td>
+						<td>
+							<input class="text" type="text" id="author" name="author" value="" size="80" maxlength="255">
+		
+						</td>
+					</tr>
+					
+					<tr class="status">
+						<td width="25%">TrackType</td>
+						<td>
+							<input class="text" type="text" id="type" name="type" value="" size="80" maxlength="255">
+		
+						</td>
+					</tr>
+					
+					<tr class="status">
+						<td width="25%">TrackBitrate</td>
+						<td>
+							<input class="text" type="text" id="bitrate" name="bitrate" value="" size="80" maxlength="255">
+		
+						</td>
+					</tr>
+					
+					
+					<tr class="status">
+						<td width="25%">TrackPlaylist</td>
+						<td>
+							'. $selctInput .'
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		
+		</form></div> <!-- Fin div de la fonction dol_fiche_head() -->
+		
+		
+		<div class="center">
+			
+		
+			<input type="submit" value="CreateTrack" class="button">
+
+			<input type="button" onclick="javascript:history.go(-1)" value="Annuler" class="button">
+			
+		</div>
+
+	</div>
+';
+
+echo $html;
+*/
+
 print $TBS->render('tpl/card_track.tpl.php'
 		,array() // Block
 		,array(
@@ -122,21 +225,16 @@ print $TBS->render('tpl/card_track.tpl.php'
 						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
 						,'showType' => $formcore->texte('', 'type', $object->type, 80, 255)
 						,'showBitrate' => $formcore->texte('', 'bitrate', $object->bitrate, 80, 255)
-						,'showPlaytlists' => $form->selectarray('Playlistes', ['test' => 'test', 'test2' => 'test2'])
+						,'showPlaytlists' => $form->selectarray('fk_playlist',$selectArray)
 //			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 						//,'showStatus' => $object->getLibStatut(1)
 				)
 				,'langs' => $langs
 				,'user' => $user
 				,'conf' => $conf
-				//,'TplaylistAbricot' => array(
-				//	'STATUS_DRAFT' => TplaylistAbricot::STATUS_DRAFT
-				//	,'STATUS_VALIDATED' => TplaylistAbricot::STATUS_VALIDATED
-				//	,'STATUS_REFUSED' => TplaylistAbricot::STATUS_REFUSED
-				//	,'STATUS_ACCEPTED' => TplaylistAbricot::STATUS_ACCEPTED
-				//)
 		)
 );
+
 		
 if ($mode == 'edit') echo $formcore->end_form();
 

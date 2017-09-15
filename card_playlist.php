@@ -10,12 +10,15 @@ if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 
 $langs->load('playlistabricot@playlistabricot');
 
-$action = 	GETPOST('action');
-$id = 		GETPOST('id', 'int');
-$title = 	GETPOST('title');
-$author = 	GETPOST('author');
+$action = 		GETPOST('action');
+$id = 			GETPOST('id', 'int');
+$title = 		GETPOST('title');
+$author = 		GETPOST('author');
+$bitrate = 		GETPOST('bitrate');
+$type = 		GETPOST('type');
+$fk_playlist = 	GETPOST('fk_playlist');
 
-$ref = 		GETPOST('ref');
+$ref = 			GETPOST('ref');
 
 $mode = 'view';
 if (empty($user->rights->playlistabricot->all->write)) 	$mode = 'view'; // Force 'view' mode if can't edit object
@@ -43,8 +46,6 @@ if (empty($reshook))
 	switch ($action) {
 		case 'save':
 			$object->set_values($_REQUEST); // Set standard attributes
-			
-			
 			
 			if ($error > 0)
 			{

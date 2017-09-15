@@ -188,7 +188,9 @@ class TplaylistAbricot extends TObjetStd
 		return $object->getNomUrl($withpicto);
 	}
 	
-	public static function getPlaylists($)
+	public static function getPlaylists(){
+		
+	}
 		
 	
 	/*
@@ -272,7 +274,31 @@ class TTrackAbricot extends TObjetStd
 		$res = parent::loadBy($PDOdb, $value, $field, $annexe);
 		
 		return $res;
-	}
+	}	
 	
+	public function save(&$PDOdb, $addprov=false)
+	{
+		var_dump($this);
+		exit();
+		global $user;
+		
+		if (!$this->getId()) $this->fk_user_author = $user->id;
+		
+		$res = parent::save($PDOdb);
+		
+		if ($addprov || !empty($this->is_clone))
+		{
+			$this->ref = '(PROV'.$this->getId().')';
+			
+			if (!empty($this->is_clone)) $this->status = self::STATUS_DRAFT;
+			
+			$wc = $this->withChild;
+			$this->withChild = false;
+			$res = parent::save($PDOdb);
+			$this->withChild = $wc;
+		}
+		
+		return $res;
+	}
 }
 
