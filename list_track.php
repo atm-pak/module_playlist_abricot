@@ -16,6 +16,7 @@ $hookmanager->initHooks(array('mymodulelist'));
 /*
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -24,6 +25,7 @@ if (empty($reshook))
 {
 	// do action from GETPOST ...
 }
+
 
 /*
  * View
@@ -35,9 +37,9 @@ llxHeader('',$langs->trans('MyModuleList'),'','');
 //if (empty($user->rights->mymodule->all->read)) $type = 'mine';
 
 // TODO ajouter les champs de son objet que l'on souhaite afficher
-$sql = 'SELECT t.rowid, t.title, t.author';
+$sql = 'SELECT t.rowid, t.title, t.author, t.type, t.bitrate';
 
-$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot t ';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'trackAbricot t ';
 //$sql.= ' AND t.entity IN ('.getEntity('MyModule', 1).')';
 //if ($type == 'mine') $sql.= ' AND t.fk_user = '.$user->id;
 // echo $sql;
@@ -45,6 +47,7 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot t ';
 $formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_mymodule', 'GET');
 
 $nbLine = !empty($user->conf->MAIN_SIZE_LISTE_LIMIT) ? $user->conf->MAIN_SIZE_LISTE_LIMIT : $conf->global->MAIN_SIZE_LISTE_LIMIT;
+
 $r = new TListviewTBS('playlistabricot');
 echo $r->render($PDOdb, $sql, array(
 		'view_type' => 'list' // default = [list], [raw], [chart]
@@ -66,7 +69,7 @@ echo $r->render($PDOdb, $sql, array(
 				'rowid'
 		)
 		,'liste' => array(
-				'titre' => $langs->trans('TplayList')
+				'titre' => $langs->trans('TrackList')
 				,'image' => img_picto('','title_generic.png', '', 0)
 				,'picto_precedent' => '<'
 				,'picto_suivant' => '>'

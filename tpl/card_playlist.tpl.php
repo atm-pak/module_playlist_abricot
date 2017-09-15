@@ -1,15 +1,19 @@
 <!-- Un début de <div> existe de par la fonction dol_fiche_head() -->
-	<!--<input type="hidden" name="action" value="[view.action]" />-->
+	<input type="hidden" name="action" value="[view.action]" />
 	<table width="100%" class="border">
 		<tbody>
 			<tr class="label">
 				<td width="25%">[langs.transnoentities(PlaylistTitle)]</td>
-				<td><input size="45" type="text" name="title" value="" /></td>
+				<td>
+					[view.showTitle;strconv=no]
+				</td>
 			</tr>
 
 			<tr class="status">
 				<td width="25%">[langs.transnoentities(PlaylistAuthor)]</td>
-				<td><input size="45" type="text" name="author" value="" /></td>
+				<td>
+					[view.showAuthor;strconv=no]
+				</td>
 			</tr>
 		</tbody>
 	</table>
@@ -27,7 +31,7 @@
 	
 	[onshow;block=begin;when [object.getId()]=0]
 	<input type="submit" value="[langs.transnoentities(CreatePlaylist)]" class="button" />
-	<input type="hidden" name="action" value="save"/>
+	
 	[onshow;block=end]
 	
 	<input type="button" onclick="javascript:history.go(-1)" value="[langs.transnoentities(Cancel)]" class="button">
@@ -37,8 +41,9 @@
 
 [onshow;block=begin;when [view.mode]!='edit']
 <div class="tabsAction">
-	[onshow;block=begin;when [user.rights.playlistabricot.write;noerr]=1]
-		
-	[onshow;block=end]
+	
+		<div class="inline-block divButAction"><a href="[view.urlcard]?id=[object.getId()]&action=edit" class="butAction">[langs.transnoentities(Modify)]</a></div>
+		<div class="inline-block divButAction"><a onclick="if (!confirm('Sur ?')) return false;" href="[view.urlcard]?id=[object.getId()]&action=delete" class="butAction">[langs.transnoentities(Delete)]</a></div>
+	
 </div>
 [onshow;block=end]

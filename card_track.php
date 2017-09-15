@@ -43,9 +43,7 @@ if (empty($reshook))
 	switch ($action) {
 		case 'save':
 			$object->set_values($_REQUEST); // Set standard attributes
-			
-			
-			
+						
 			if ($error > 0)
 			{
 				$mode = 'edit';
@@ -54,7 +52,7 @@ if (empty($reshook))
 			
 			$object->save($PDOdb, empty($object->ref));
 			
-			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$object->getId());
+			header('Location: '.dol_buildpath('/playlistabricot/card_track.php', 1).'?id='.$object->getId());
 			exit;
 			
 			break;
@@ -65,29 +63,6 @@ if (empty($reshook))
 			exit;
 			
 			break;
-		case 'confirm_clone':
-			$object->cloneObject($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/card.php', 1).'?plistid='.$object->getId());
-			exit;
-			break;
-		case 'modif':
-			if (!empty($user->rights->mymodule->write)) $object->setDraft($PDOdb);
-			
-			break;
-		case 'confirm_validate':
-			if (!empty($user->rights->mymodule->write)) $object->setValid($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
-			exit;
-			break;
-		case 'confirm_delete':
-			if (!empty($user->rights->mymodule->write)) $object->delete($PDOdb);
-			
-			header('Location: '.dol_buildpath('/playlistabricot/list_playlist.php', 1));
-			exit;
-			break;
-			// link from llx_element_element
 		case 'dellink':
 			$object->generic->deleteObjectLinked(null, '', null, '', GETPOST('dellinkid'));
 			header('Location: '.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?plistid='.$object->getId());
@@ -128,10 +103,12 @@ $TBS=new TTemplateTBS();
 $TBS->TBS->protect=false;
 $TBS->TBS->noerr=true;
 
+if ($mode == 'edit') 
+
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_playlistabricot');
 
 $linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'">' . $langs->trans("BackToList") . '</a>';
-print $TBS->render('tpl/card_playlist.tpl.php'
+print $TBS->render('tpl/card_track.tpl.php'
 		,array() // Block
 		,array(
 				'object'=>$object
@@ -143,6 +120,9 @@ print $TBS->render('tpl/card_playlist.tpl.php'
 						//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 						,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
 						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
+						,'showType' => $formcore->texte('', 'type', $object->type, 80, 255)
+						,'showBitrate' => $formcore->texte('', 'bitrate', $object->bitrate, 80, 255)
+						,'showPlaytlists' => $form->selectarray('Playlistes', ['test' => 'test', 'test2' => 'test2'])
 //			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 						//,'showStatus' => $object->getLibStatut(1)
 				)

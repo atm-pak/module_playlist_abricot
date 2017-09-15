@@ -162,7 +162,7 @@ class TplaylistAbricot extends TObjetStd
         if (! empty($this->ref)) $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $link = '<a href="'.dol_buildpath('/playlistabricot/card.php', 1).'?id='.$this->getId(). $get_params .$linkclose;
+        $link = '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$this->getId(). $get_params .$linkclose;
        
         $linkend='</a>';
 
@@ -187,6 +187,9 @@ class TplaylistAbricot extends TObjetStd
 		
 		return $object->getNomUrl($withpicto);
 	}
+	
+	public static function getPlaylists($)
+		
 	
 	/*
 	public function getLibStatut($mode=0)

@@ -288,7 +288,7 @@ class modplaylistAbricot extends DolibarrModules
 								'titre'=>		'Tracks',
 								'mainmenu'=>	'playlistabricot',
 								'leftmenu'=>	'playlistabricot_left',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-								'url'=>			'/playlistabricot/tracks_list.php',
+								'url'=>			'/playlistabricot/list_track.php',
 								'langs'=>		'playlistabricot@playlistabricot',
 								'position'=>	100 +$r,
 								'enabled'=>		'$conf->workstation->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -307,7 +307,7 @@ class modplaylistAbricot extends DolibarrModules
 								'titre'=>		'Liste',
 								'mainmenu'=>	'playlistabricot',
 								'leftmenu'=>	'playlistabricot_left_liste',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-								'url'=>			'/playlistabricot/tracks_list.php',
+								'url'=>			'/playlistabricot/list_track.php',
 								'langs'=>		'playlistabricot@playlistabricot',
 								'position'=>	100 +$r,
 								'enabled'=>		'$conf->workstation->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -326,7 +326,7 @@ class modplaylistAbricot extends DolibarrModules
 								'titre'=>		'Creer track',
 								'mainmenu'=>	'playlistabricot',
 								'leftmenu'=>	'playlistabricot_left_create',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-								'url'=>			'/playlistabricot/card_tracks.php?action=new',
+								'url'=>			'/playlistabricot/card_track.php?action=create',
 								'langs'=>		'playlistabricot@playlistabricot',
 								'position'=>	100 +$r,
 								'enabled'=>		'$conf->workstation->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
