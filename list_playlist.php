@@ -3,7 +3,7 @@
 require 'config.php';
 dol_include_once('/playlistabricot/class/playlistabricot.class.php');
 
-if(empty($user->rights->mymodule->read)) accessforbidden();
+if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 
 $langs->load('abricot@abricot');
 $langs->load('mymodule@mymodule');

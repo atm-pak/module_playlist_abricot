@@ -108,51 +108,53 @@ $linkback = '<a href="'.dol_buildpath('/playlistabricot/list_playlist.php', 1).'
  */
 //recup les obj playlist
 $sql = 'SELECT rowid, title';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistabricot';
 
 $resql = $db->query($sql);
 $arrObjRow = array();
 
-if($resql)
+if($resql->num_rows > 0)
 {
 	while($objPlaylist = $db->fetch_object($resql))
 	{
 		array_push($arrObjRow, $objPlaylist);
 	}
-}
-//creation du tableau associatif a passer en param a la fonction de generation de champ select
-$selectArray = array();
-foreach($arrObjRow as $objPlaylist)
-{
-	$selectArray[$objPlaylist->rowid] = $objPlaylist->title;
-}
 
-print $TBS->render('tpl/card_track.tpl.php'
+	//creation du tableau associatif a passer en param a la fonction de generation de champ select
+	$selectArray = array();
+	foreach($arrObjRow as $objPlaylist)
+	{
+		$selectArray[$objPlaylist->rowid] = $objPlaylist->title;
+	}
+
+	print $TBS->render('tpl/card_track.tpl.php'
 		,array() // Block
 		,array(
-				'object'=>$object
-				,'view' => array(
-						'mode' => $mode
-						,'action' => 'save'
-						,'urlcard' => dol_buildpath('/playlistabricot/card_track.php', 1)
-						,'urllist' => dol_buildpath('/playlistabricot/list_track.php', 1)
-						//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
-						,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
-						,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
-						,'showType' => $formcore->texte('', 'type', $object->type, 80, 255)
-						,'showBitrate' => $formcore->texte('', 'bitrate', $object->bitrate, 80, 255)
-						,'showPlaytlists' => $form->selectarray('fk_playlist',$selectArray, $object->fk_playlist)
-						,'showPlaylistName' => $object->getPlaylistAssociate()
+			'object'=>$object
+		,'view' => array(
+				'mode' => $mode
+			,'action' => 'save'
+			,'urlcard' => dol_buildpath('/playlistabricot/card_track.php', 1)
+			,'urllist' => dol_buildpath('/playlistabricot/list_track.php', 1)
+				//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
+			,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
+			,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
+			,'showType' => $formcore->texte('', 'type', $object->type, 80, 255)
+			,'showBitrate' => $formcore->texte('', 'bitrate', $object->bitrate, 80, 255)
+			,'showPlaytlists' => $form->selectarray('fk_playlist',$selectArray, $object->fk_playlist)
 //			,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
-						//,'showStatus' => $object->getLibStatut(1)
-				)
-				,'langs' => $langs
-				,'user' => $user
-				,'conf' => $conf
+				//,'showStatus' => $object->getLibStatut(1)
+			)
+		,'langs' => $langs
+		,'user' => $user
+		,'conf' => $conf
 		)
-);
+	);
+}
+else{
+	setEventMessage('Creer une playlist avant', 'errors');
+}
 
-		
 if ($mode == 'edit') echo $formcore->end_form();
 
 //if ($mode == 'view' && $object->getId()) $somethingshown = $form->showLinkedObjectBlock($object->generic);

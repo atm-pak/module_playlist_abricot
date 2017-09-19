@@ -304,7 +304,7 @@ class TTrackAbricot extends TObjetStd
 				FROM '.MAIN_DB_PREFIX.'trackAbricot as t 
 				LEFT JOIN llx_playlistAbricot as pl
 				ON pl.rowid = t.fk_playlist
-				WHERE t.fk_playlist = 0 '
+				WHERE t.fk_playlist = 0 ';
 		$this->fk_playlist;
 	}
 }
