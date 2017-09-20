@@ -1,6 +1,8 @@
 <?php
 
 require 'config.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 dol_include_once('/playlistabricot/class/playlistabricot.class.php');
 
 if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
@@ -28,7 +30,15 @@ if (empty($reshook))
 	$error = 0;
 	switch ($action) {
 		case 'showPlaylistAssoc':
-                    $html = __showThirpartyPlaylists($PDOdb, $socid);
+                    if(!empty($socid))
+                    {
+                        //reprendre ici
+                        require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$socObj = new Societe($db);
+			$socObj->fetch($socid);
+                        $head = societe_prepare_head($socObj);
+                        $html = __showThirpartyPlaylists($PDOdb, $socid);
+                    }
                     break;
                 
                 default:
@@ -40,9 +50,13 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('',$langs->trans('MyModuleList'),'','');
+llxHeader('',$langs->trans('Playlist'),'','');
 
 $formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_mymodule', 'GET');
+
+if($action == 'showPlaylistAssoc'){
+    dol_fiche_head($head, 'Playlistes', $langs->trans("playlistAbricot"), 0, $picto);
+}
 
 print $html;
 
