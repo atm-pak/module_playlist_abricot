@@ -75,22 +75,21 @@ class modplaylistAbricot extends DolibarrModules
 		// for default path (eg: /playlistabricot/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /playlistabricot/core/modules/barcode)
 		// for specific css file (eg: /playlistabricot/css/playlistabricot.css.php)
-		//$this->module_parts = array(
-		//                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-		//							'login' => 0,                                    	// Set this to 1 if module has its own login method directory (core/login)
-		//							'substitutions' => 0,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-		//							'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-		//							'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		//                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-		//							'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-		//							'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-		//							'css' => array('/playlistabricot/css/playlistabricot.css.php'),	// Set this to relative path of css file if module has its own css file
-	 	//							'js' => array('/playlistabricot/js/playlistabricot.js'),          // Set this to relative path of js file if module must load a js on all pages
-		//							'hooks' => array('hookcontext1','hookcontext2')  	// Set here all hooks context managed by module
-		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
-		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@playlistabricot')) // Set here all workflow context managed by module
-		//                        );
-		$this->module_parts = array();
+		$this->module_parts = array(
+                //                                                      'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+                //							'login' => 0,                                    	// Set this to 1 if module has its own login method directory (core/login)
+                //							'substitutions' => 0,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
+                //							'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
+                //							'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
+                //                                                      'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+                //							'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
+                //							'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
+                //							'css' => array('/playlistabricot/css/playlistabricot.css.php'),	// Set this to relative path of css file if module has its own css file
+                //							'js' => array('/playlistabricot/js/playlistabricot.js'),          // Set this to relative path of js file if module must load a js on all pages
+                							'hooks' => array('thirdpartycard')  	// Set here all hooks context managed by module
+                //							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
+                //							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@playlistabricot')) // Set here all workflow context managed by module
+                                        );
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/playlistabricot/temp");
@@ -116,9 +115,17 @@ class modplaylistAbricot extends DolibarrModules
 		$this->const = array();
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:playlistabricot@playlistabricot:$user->rights->playlistabricot->read:/playlistabricot/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:Title2:playlistabricot@playlistabricot:$user->rights->othermodule->read:/playlistabricot/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
-        //                              'objecttype:-tabname:NU:conditiontoremove');                                                     						// To remove an existing tab identified by code tabname
+		$this->tabs = array(
+                    'thirdparty:+tabname1:Playlistes:playlistabricot@playlistabricot:$user->rights->playlistabricot->all->read:/playlistabricot/list_playlist.php?socid=__ID__&action=showPlaylistAssoc',
+                    );  	// To add a new tab identified by code tabname1
+                                     //'objecttype:+tabname2:Title2:playlistabricot@playlistabricot:$user->rights->othermodule->read:/playlistabricot/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
+                                     //'objecttype:-tabname:NU:conditiontoremove');                                                     						// To remove an existing tab identified by code tabname
+                                     
+                
+                //echo('lol');
+                //var_dump($this->tabs);
+                //die('ok');
+                
 		// where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
@@ -139,10 +146,10 @@ class modplaylistAbricot extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array();
+        //$this->tabs = array();
 
         // Dictionaries
-	    if (! isset($conf->playlistabricot->enabled))
+	if (! isset($conf->playlistabricot->enabled))
         {
         	$conf->playlistabricot=new stdClass();
         	$conf->playlistabricot->enabled=0;
@@ -431,7 +438,7 @@ class modplaylistAbricot extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+         *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
@@ -453,7 +460,7 @@ class modplaylistAbricot extends DolibarrModules
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+         *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function remove($options='')
