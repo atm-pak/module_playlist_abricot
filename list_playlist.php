@@ -31,8 +31,8 @@ if (empty($reshook))
 
 llxHeader('',$langs->trans('MyModuleList'),'','');
 
-$sql = 'SELECT t.rowid, t.title, t.author';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot t ';
+$sql = 'SELECT rowid, fk_author, title, author';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot';
 
 
 $formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_mymodule', 'GET');
@@ -46,7 +46,8 @@ echo $r->render($PDOdb, $sql, array(
 		)
 		,'subQuery' => array()
 		,'link' => array(
-				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>'
+				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
+				'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
 		)
 		,'type' => array()
 		,'search' => array(
@@ -56,7 +57,8 @@ echo $r->render($PDOdb, $sql, array(
 		)
 		,'translate' => array()
 		,'hide' => array(
-				'rowid'
+				'rowid',
+				'fk_author'
 		)
 		,'liste' => array(
 				'titre' => $langs->trans('TplayList')

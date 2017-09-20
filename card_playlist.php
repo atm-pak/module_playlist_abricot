@@ -127,7 +127,7 @@ $htmlDefault = $TBS->render('tpl/card_playlist.tpl.php'
 					,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
 					//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 					,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
-					,'showAuthorSelect' => $form->select_thirdparty_list('','fk_author')
+					,'showAuthorSelect' => $form->select_thirdparty_list($object->fk_author,'fk_author')
 					,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
 					//,'showStatus' => $object->getLibStatut(1)
 				)
@@ -160,11 +160,9 @@ if ($mode == 'edit') echo $formcore->end_form();
 
 llxFooter();
 
+//liste des tracks pour la ficher playlist
 function _liste(&$PDOdb, $id) {
 	global $conf, $langs;
-	/*
-	 * Liste des poste de travail de l'entité
-	 */
 	
 	$l=new TListviewTBS('listWS');
 	$sql= "SELECT rowid, title, author, type, bitrate FROM llx_trackAbricot WHERE fk_playlist = ". $id;
@@ -172,7 +170,8 @@ function _liste(&$PDOdb, $id) {
 	$html = $l->render($PDOdb, $sql, array(
 			
 			'link'=>array(
-					'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>'
+					'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>',
+					'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@rowid@">@val@</a>'
 			)
 			,'title'=>array(
 					'title'=>"Titre",
