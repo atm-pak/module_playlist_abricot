@@ -116,7 +116,7 @@ class modplaylistAbricot extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-                    'thirdparty:+tabname1:Playlistes:playlistabricot@playlistabricot:$user->rights->playlistabricot->all->read:/playlistabricot/list_playlist.php?socid=__ID__&action=showPlaylistAssoc',
+                    'thirdparty:+playlist:Playlists:playlistabricot@playlistabricot:$user->rights->playlistabricot->all->read:/playlistabricot/list_playlist.php?socid=__ID__&action=showPlaylistAssoc',
                     );  	// To add a new tab identified by code tabname1
                                      //'objecttype:+tabname2:Title2:playlistabricot@playlistabricot:$user->rights->othermodule->read:/playlistabricot/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
                                      //'objecttype:-tabname:NU:conditiontoremove');                                                     						// To remove an existing tab identified by code tabname

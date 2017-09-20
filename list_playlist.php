@@ -29,20 +29,20 @@ if (empty($reshook))
 {
 	$error = 0;
 	switch ($action) {
-		case 'showPlaylistAssoc':
-                    if(!empty($socid))
-                    {
-                        //reprendre ici
-                        require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-			$socObj = new Societe($db);
-			$socObj->fetch($socid);
-                        $head = societe_prepare_head($socObj);
-                        $html = __showThirpartyPlaylists($PDOdb, $socid);
-                    }
-                    break;
-                
-                default:
-                    $html = __showDefaultList($PDOdb);
+            case 'showPlaylistAssoc':
+                if(!empty($socid))
+                {
+                    //reprendre ici
+                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+                    $socObj = new Societe($db);
+                    $socObj->fetch($socid);
+                    $head = societe_prepare_head($socObj);
+                    $html = __showThirpartyPlaylists($PDOdb, $socid);
+                }
+                break;
+
+            default:
+                $html = __showDefaultList($PDOdb);
 	}
 }
 
@@ -55,7 +55,7 @@ llxHeader('',$langs->trans('Playlist'),'','');
 $formcore = new TFormCore($_SERVER['PHP_SELF'], 'form_list_mymodule', 'GET');
 
 if($action == 'showPlaylistAssoc'){
-    dol_fiche_head($head, 'Playlistes', $langs->trans("playlistAbricot"), 0, $picto);
+    dol_fiche_head($head, 'playlist', $langs->trans("playlistAbricot"), 0, $picto);
 }
 
 print $html;
