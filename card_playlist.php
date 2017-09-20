@@ -170,8 +170,8 @@ function _liste(&$PDOdb, $id) {
 	$html = $l->render($PDOdb, $sql, array(
 			
 			'link'=>array(
-					'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>',
-					'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@rowid@">@val@</a>'
+					//'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>',
+					//'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@rowid@">@val@</a>'
 			)
 			,'title'=>array(
 					'title'=>"Titre",

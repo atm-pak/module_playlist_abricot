@@ -156,25 +156,25 @@ class TplaylistAbricot extends TObjetStd
 	
 	public function getNomUrl($withpicto=0, $get_params='')
 	{
-		global $langs;
+            global $langs;
 
-        $result='';
-        $label = '<u>' . $langs->trans("ShowplaylistAbricot") . '</u>';
-        if (! empty($this->ref)) $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $link = '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$this->getId(). $get_params .$linkclose;
-       
-        $linkend='</a>';
+            $result='';
+            $label = '<u>' . $langs->trans("ShowplaylistAbricot") . '</u>';
+            if (! empty($this->ref)) $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $picto='generic';
-		
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-		
-        $result.=$link.$this->ref.$linkend;
-		
-        return $result;
+            $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $link = '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id='.$this->getId(). $get_params .$linkclose;
+
+            $linkend='</a>';
+
+            $picto='generic';
+
+            if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+            if ($withpicto && $withpicto != 2) $result.=' ';
+
+            $result.=$link.$this->title.$linkend;
+
+            return $result;
 	}
 	
 	public static function getStaticNomUrl($id, $withpicto=0)

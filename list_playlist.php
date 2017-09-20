@@ -3,6 +3,7 @@
 require 'config.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 dol_include_once('/playlistabricot/class/playlistabricot.class.php');
 
 if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
@@ -12,9 +13,12 @@ $langs->load('mymodule@mymodule');
 
 $PDOdb = new TPDOdb;
 $object = new TplaylistAbricot();
+$socObj = new Societe($db);
 
 $action = GETPOST('action');
 $socid = GETPOST('socid');
+
+if ($socid) $socObj->fetch($socid);
 
 $hookmanager->initHooks(array('mymodulelist'));
 
@@ -32,10 +36,6 @@ if (empty($reshook))
             case 'showPlaylistAssoc':
                 if(!empty($socid))
                 {
-                    //reprendre ici
-                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-                    $socObj = new Societe($db);
-                    $socObj->fetch($socid);
                     $head = societe_prepare_head($socObj);
                     $html = __showThirpartyPlaylists($PDOdb, $socid);
                 }
@@ -59,10 +59,6 @@ if($action == 'showPlaylistAssoc'){
 }
 
 print $html;
-
-$parameters=array('sql'=>$sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters, $object);    // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
 
 $formcore->end_form();
 
@@ -102,8 +98,8 @@ function __showDefaultList($PDOdb)
 		)
 		,'subQuery' => array()
 		,'link' => array(
-				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
-				'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
+			'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
+			'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
 		)
 		,'type' => array()
 		,'search' => array(
@@ -130,7 +126,11 @@ function __showDefaultList($PDOdb)
 				,'author' => $langs->trans('author')
 		)
 		,'eval'=>array(
-				//'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)' // Si on a un fk_user dans notre requête
+                                
+                                //TODO comprendre prk generer auto les liens a pour consequence de ne n'afficher qu'une seule playlist
+                                 
+				//'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)', // Si on a un fk_user dans notre requête
+				//'author' => '__getNomSocUrl(@fk_author@)' // Si on a un fk_user dans notre requête
 		)
         ));
     
@@ -156,8 +156,7 @@ function __showThirpartyPlaylists($PDOdb, $socid)
 		)
 		,'subQuery' => array()
 		,'link' => array(
-				'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
-				'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
+				//'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
 		)
 		,'type' => array()
 		,'search' => array(
@@ -185,9 +184,18 @@ function __showThirpartyPlaylists($PDOdb, $socid)
 				,'author' => $langs->trans('author')
 		)
 		,'eval'=>array(
-				//'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)' // Si on a un fk_user dans notre requête
+				'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)', // Si on a un fk_user dans notre requête
+
 		)
             ));
     
     return $html;
+}
+
+function __getNomSocUrl($socid)
+{
+    global $db;
+    $socObj = new Societe($db);
+    $socObj->fetch($socid); 
+    return $socObj->getNomUrl();
 }
