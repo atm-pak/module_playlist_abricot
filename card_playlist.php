@@ -42,6 +42,11 @@ if (empty($reshook))
 	$error = 0;
 	switch ($action) {
 		case 'save':
+			//get soc name
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$socObj = new Societe($db);
+			$socObj->fetch($_REQUEST['fk_author']);
+			$_REQUEST['author'] = $socObj->name;
 			$object->set_values($_REQUEST); // Set standard attributes
 			
 			if ($error > 0)
@@ -122,9 +127,8 @@ $htmlDefault = $TBS->render('tpl/card_playlist.tpl.php'
 					,'urllist' => dol_buildpath('/playlistabricot/list_playlist.php', 1)
 					//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 					,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
+					,'showAuthorSelect' => $form->select_thirdparty_list('','fk_author')
 					,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
-						
-					//,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 					//,'showStatus' => $object->getLibStatut(1)
 				)
 				,'langs' => $langs
@@ -165,7 +169,7 @@ function _liste(&$PDOdb, $id) {
 	$l=new TListviewTBS('listWS');
 	$sql= "SELECT rowid, title, author, type, bitrate FROM llx_trackAbricot WHERE fk_playlist = ". $id;
 
-	$html = $l->render($PDOdb, $sql,array(
+	$html = $l->render($PDOdb, $sql, array(
 			
 			'link'=>array(
 					'title' => '<a href="'.dol_buildpath('/playlistabricot/card_track.php', 1).'?id=@rowid@">@val@</a>'

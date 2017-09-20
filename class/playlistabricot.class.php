@@ -19,7 +19,8 @@ class TplaylistAbricot extends TObjetStd
 		$this->set_table(MAIN_DB_PREFIX.'playlistAbricot');
 		
 		$this->add_champs('title', 	array('type' => 'string', 'length' => 80, 'index' => true));
-		$this->add_champs('author', array('type' => 'string'));
+		$this->add_champs('author', array('type' => 'string', 'length' => 80, 'index' => true));
+		$this->add_champs('fk_author', array('type' => 'integer', 'length' => 80, 'index' => true));
 //		$this->add_champs('dateLastModif', array('type' => 'date'));
 		
 //		$this->add_champs('entity,fk_user_author', array('type' => 'integer', 'index' => true));

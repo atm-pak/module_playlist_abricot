@@ -12,7 +12,13 @@
 			<tr class="status">
 				<td width="25%">[langs.transnoentities(PlaylistAuthor)]</td>
 				<td>
+				[onshow;block=begin;when [view.mode]='edit']
+					[view.showAuthorSelect;strconv=no]
+				[onshow;block=end]
+				
+				[onshow;block=begin;when [view.mode]!='edit']
 					[view.showAuthor;strconv=no]
+				[onshow;block=end]
 				</td>
 			</tr>
 		</tbody>
