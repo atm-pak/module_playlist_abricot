@@ -123,6 +123,7 @@ $htmlDefault = $TBS->render('tpl/card_playlist.tpl.php'
 					//,'showRef' => ($action == 'create') ? $langs->trans('Draft') : $form->showrefnav($object->generic, 'ref', $linkback, 1, 'ref', 'ref', '')
 					,'showTitle' => $formcore->texte('', 'title', $object->title, 80, 255)
 					,'showAuthor' => $formcore->texte('', 'author', $object->author, 80, 255)
+						
 					//,'showNote' => $formcore->zonetexte('', 'note', $object->note, 80, 8)
 					//,'showStatus' => $object->getLibStatut(1)
 				)
