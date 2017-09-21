@@ -126,9 +126,6 @@ function __showDefaultList($PDOdb)
 				,'author' => $langs->trans('author')
 		)
 		,'eval'=>array(
-                                
-                                //TODO ca vient du title
-                                 
 				'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)', // Si on a un fk_user dans notre requête
 				'author' => '__getNomSocUrl(@fk_author@)' // Si on a un fk_user dans notre requête
 		)
@@ -137,7 +134,7 @@ function __showDefaultList($PDOdb)
         return $html;
 }
 
-function __showThirpartyPlaylists($PDOdb2, $socid)
+function __showThirpartyPlaylists($PDOdb, $socid)
 {
     global $langs, $conf, $user;
 
@@ -149,7 +146,7 @@ function __showThirpartyPlaylists($PDOdb2, $socid)
     $sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot';
     $sql.= ' WHERE fk_author = '. $socid;
     
-    $html = $r->render($PDOdb2, $sql, array(
+    $html = $r->render($PDOdb, $sql, array(
 		'view_type' => 'list' // default = [list], [raw], [chart]
 		,'limit'=>array(
 				'nbLine' => $nbLine

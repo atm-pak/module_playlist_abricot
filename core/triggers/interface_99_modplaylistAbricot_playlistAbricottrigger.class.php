@@ -113,6 +113,7 @@ class InterfaceplaylistAbricottrigger
      */
     public function run_trigger($action, $object, $user, $langs, $conf)
     {
+        global $db;
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
@@ -565,6 +566,23 @@ class InterfaceplaylistAbricottrigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
+        
+        // Event
+        elseif ($action == 'ACTION_CREATE') {
+            //get la playlist id associé a l'object
+            $extrafields = new ExtraFields($db);
+            $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+            $object->fetch_optionals(null,$extralabels);
+            if(!empty($object->array_options))
+            {
+                $playlisId = $object->array_options['options_fk_playlist'];
+            }
+            //get l'ensemble des playlists associé aux events du meme jour
+            //#TODO reprendre ici
+            dol_syslog(
+                "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+            );
+        } 
 
         return 0;
     }
