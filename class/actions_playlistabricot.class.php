@@ -62,6 +62,7 @@ class ActionsplaylistAbricot
 	 */
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
+                global $db;
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
@@ -71,7 +72,34 @@ class ActionsplaylistAbricot
 
 		if (in_array('actioncard', explode(':', $parameters['context'])))
 		{
-			echo('on est la');
+                    /*
+                    //creer array key=>value de id_playlist -> playlist
+                    
+                    //appeler selectArray sur $form
+                    $form = new Form($db);
+                    //recuperer le html du form
+                    //remplacer le html du extrafield par celui du form créé
+                    
+                    ?>
+                    <script type="text/javascript">
+                            $(function() {
+                                $.ajax({
+                                url: '../../custom/playlistabricot/ajaxCall.php',
+                                type: 'POST',
+                                data: {toGet: 'selectInputOfPlaylist'},
+                                dataType: 'jsonp',
+                                success: function(data) {
+                                   console.log(data);
+                                   alert('ok');
+                                },
+                                
+                                });
+                             
+                                $container_td = $('input[name="options_fk_playlist"]').closest('td');
+                            });
+                    </script>
+                    <?php
+                     */
 		}
 
 		if (! $error)

@@ -11,7 +11,7 @@ if(empty($user->rights->playlistabricot->all->read)) accessforbidden();
 $langs->load('abricot@abricot');
 $langs->load('mymodule@mymodule');
 
-$PDOdb = new TPDOdb;
+$PDOdb2 = new TPDOdb;
 $object = new TplaylistAbricot();
 $socObj = new Societe($db);
 
@@ -37,12 +37,12 @@ if (empty($reshook))
                 if(!empty($socid))
                 {
                     $head = societe_prepare_head($socObj);
-                    $html = __showThirpartyPlaylists($PDOdb, $socid);
+                    $html = __showThirpartyPlaylists($PDOdb2, $socid);
                 }
                 break;
 
             default:
-                $html = __showDefaultList($PDOdb);
+                $html = __showDefaultList($PDOdb2);
 	}
 }
 
@@ -98,8 +98,8 @@ function __showDefaultList($PDOdb)
 		)
 		,'subQuery' => array()
 		,'link' => array(
-			'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
-			'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
+			//'title' => '<a href="'.dol_buildpath('/playlistabricot/card_playlist.php', 1).'?id=@rowid@">@val@</a>',
+			//'author' => '<a href="'.dol_buildpath('/societe/card.php', 1).'?socid=@fk_author@">@val@</a>'
 		)
 		,'type' => array()
 		,'search' => array(
@@ -127,17 +127,17 @@ function __showDefaultList($PDOdb)
 		)
 		,'eval'=>array(
                                 
-                                //TODO comprendre prk generer auto les liens a pour consequence de ne n'afficher qu'une seule playlist
+                                //TODO ca vient du title
                                  
-				//'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)', // Si on a un fk_user dans notre requête
-				//'author' => '__getNomSocUrl(@fk_author@)' // Si on a un fk_user dans notre requête
+				'title' => 'TplaylistAbricot::getStaticNomUrl(@rowid@, 1)', // Si on a un fk_user dans notre requête
+				'author' => '__getNomSocUrl(@fk_author@)' // Si on a un fk_user dans notre requête
 		)
         ));
     
         return $html;
 }
 
-function __showThirpartyPlaylists($PDOdb, $socid)
+function __showThirpartyPlaylists($PDOdb2, $socid)
 {
     global $langs, $conf, $user;
 
@@ -149,7 +149,7 @@ function __showThirpartyPlaylists($PDOdb, $socid)
     $sql.= ' FROM '.MAIN_DB_PREFIX.'playlistAbricot';
     $sql.= ' WHERE fk_author = '. $socid;
     
-    $html = $r->render($PDOdb, $sql, array(
+    $html = $r->render($PDOdb2, $sql, array(
 		'view_type' => 'list' // default = [list], [raw], [chart]
 		,'limit'=>array(
 				'nbLine' => $nbLine

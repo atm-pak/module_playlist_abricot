@@ -177,16 +177,18 @@ class TplaylistAbricot extends TObjetStd
             return $result;
 	}
 	
+        
+        //
 	public static function getStaticNomUrl($id, $withpicto=0)
 	{
-		global $PDOdb;
-		
-		if (empty($PDOdb)) $PDOdb = new TPDOdb;
-		
-		$object = new TplaylistAbricot;
-		$object->load($PDOdb, $id, false);
-		
-		return $object->getNomUrl($withpicto);
+            global $PDOdb;
+
+            if (empty($PDOdb)) $PDOdb = new TPDOdb;
+
+            $object = new TplaylistAbricot;
+            $object->load($PDOdb, $id, false);
+
+            return $object->getNomUrl($withpicto);
 	}
 	
 	public static function getPlaylists(){
