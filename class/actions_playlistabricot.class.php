@@ -48,6 +48,7 @@ class ActionsplaylistAbricot
 	 */
 	public function __construct()
 	{
+
 	}
 
 	/**
@@ -59,7 +60,7 @@ class ActionsplaylistAbricot
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
-	function doActions($parameters, &$object, &$action, $hookmanager)
+	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
@@ -68,9 +69,9 @@ class ActionsplaylistAbricot
 		//echo "action: " . $action;
 		//print_r($object);
 
-		if (in_array('somecontext', explode(':', $parameters['context'])))
+		if (in_array('actioncard', explode(':', $parameters['context'])))
 		{
-		  // do something only for the context 'somecontext'
+			echo('on est la');
 		}
 
 		if (! $error)

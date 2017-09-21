@@ -86,7 +86,7 @@ class modplaylistAbricot extends DolibarrModules
                 //							'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
                 //							'css' => array('/playlistabricot/css/playlistabricot.css.php'),	// Set this to relative path of css file if module has its own css file
                 //							'js' => array('/playlistabricot/js/playlistabricot.js'),          // Set this to relative path of js file if module must load a js on all pages
-                							'hooks' => array('thirdpartycard')  	// Set here all hooks context managed by module
+                							'hooks' => array('thirdpartycard','actioncard')  	// Set here all hooks context managed by module
                 //							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
                 //							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@playlistabricot')) // Set here all workflow context managed by module
                                         );
